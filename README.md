@@ -66,14 +66,6 @@ Analisar a atividade de code review desenvolvida em repositórios populares do G
 
 # Hipóteses
 
-// TO-DO
-
-# Desafios
-
-// TO-DO
-
-# Análise dos Resultados
-
 ## RQ01 – Tamanho dos PRs x Feedback
 
 Pull Requests (PRs) maiores tendem a levar mais tempo para serem concluídas, apresentam um número maior de revisões e têm menores chances de serem fechadas com sucesso. Por outro lado, PRs menores geralmente são encerradas mais rapidamente e passam por menos ciclos de revisão.
@@ -97,6 +89,12 @@ Um grande número de interações em uma PR pode indicar discussões mais extens
 | **Tempo de Análise** |  Aumenta (indica revisão longa ou travada)     |  Aumenta (mais ciclos de correção)         |  Diminui (dificuldade em concluir mudanças)          | PRs com análise longa sugerem alto esforço de revisão.           |
 | **Descrição da PR**  |  Diminui (melhora entendimento do revisor)     |  Diminui (menos necessidade de retrabalho) |  Aumenta (clareza favorece aprovação)                | Descrições completas facilitam revisões e aceleram o fechamento. |
 | **Interações na PR** |  Aumenta (mais discussões estendem o processo) |  Aumenta (mais revisões e debates)         |  Diminui (processo mais demorado para aprovação)     | Muitas interações indicam revisões complexas ou divergências.    |
+
+# Desafios
+
+// TO-DO
+
+# Análise dos Resultados
 
 ---
 
