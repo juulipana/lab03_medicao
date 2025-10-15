@@ -1,57 +1,67 @@
 import asyncio
 import csv
-from datetime import datetime
-
+import os
+import time
 from app.drivers.api_requester import ApiRequester
+from app.graph_service import GraphService
 
 
-async def main_get_top200():
+async def main():
+    # Etapa 1 — Buscar top 200 repositórios (e salvar CSV)
+    repos = await ApiRequester.get_top1000_git_repositories(keyword="stars:>1000", num_repos=200)
+    if not repos:
+        print("❌ Nenhum repositório retornado.")
+        return
+
+    print(f"✅ {len(repos)} repositórios salvos em CSV.")
+
+    # Etapa 2 — Coletar PRs dos 200 repositórios e consolidar métricas
     api = ApiRequester()
-    repos = await api.get_top1000_git_repositories(keyword="stars:>1000", num_repos=200)
-    print(f"{len(repos)} repositórios salvos em CSV.")
-
-def extract_metrics(prs):
-    metrics = []
-    for pr in prs:
-        if not pr.get("created_at") or not pr.get("closed_at"):
+    all_metrics = []
+    i = 0
+    for repo in repos:
+        i+=1
+        full_name = repo.get("full_name")
+        if not full_name or "/" not in full_name:
             continue
 
-        created = datetime.fromisoformat(pr["created_at"].replace("Z", "+00:00"))
-        closed = datetime.fromisoformat(pr["closed_at"].replace("Z", "+00:00"))
-        time_diff = (closed - created).total_seconds() / 3600  # horas
+        owner, name = full_name.split("/")
+        print(f"\n📦 Coletando PRs de {owner}/{name}...")
 
-        # pegar detalhes do PR (linhas e arquivos)
-        additions = pr.get("additions", 0)
-        deletions = pr.get("deletions", 0)
-        files_changed = pr.get("changed_files", 0)
-        description_len = len(pr.get("body") or "")
+        try:
+            prs = api.get_pr_data(owner, name, num_prs=100)
+            if not prs:
+                print(f"⚠️ Nenhum PR retornado de {owner}/{name}")
+                continue
 
-        metrics.append({
-            "id": pr["id"],
-            "state": pr["state"],
-            "additions": additions,
-            "deletions": deletions,
-            "files_changed": files_changed,
-            "description_length": description_len,
-            "analysis_time_h": time_diff,
-        })
-    return metrics
+            metrics = api.extract_pr_metrics(prs)
 
-def save_metrics_to_csv(metrics, filename="prs_metrics.csv"):
-    keys = metrics[0].keys()
-    with open(filename, "w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=keys)
-        writer.writeheader()
-        writer.writerows(metrics)
+            # adiciona nome do repo para identificar no CSV final
+            for m in metrics:
+                m["repo"] = f"{owner}/{name}"
+
+            all_metrics.extend(metrics)
+            print(f"✅ {len(metrics)} PRs coletados de {owner}/{name}")
+
+            # evita rate limit
+            time.sleep(1.2)
+            if i == 20:
+                break
+        except Exception as e:
+            print(f"❌ Erro ao processar {owner}/{name}: {e}")
+            continue
+
+    # Etapa 3 — Salvar dataset consolidado
+    if all_metrics:
+        output_file = "dataset_top200_repos_prs.csv"
+        api.save_to_csv(all_metrics, output_file)
+        print(f"\n📊 Dataset final salvo em {output_file}")
+        print(f"Total de {len(all_metrics)} PRs coletados de {len(repos)} repositórios.")
+    else:
+        print("\n⚠️ Nenhum PR coletado de nenhum repositório.")
+
 
 if __name__ == "__main__":
-    # Etapa 1 - Buscar top 200 repositórios
-    asyncio.run(ApiRequester.get_top1000_git_repositories("stars:>1000", num_repos=200))
-
-    # Etapa 2 - Exemplo: pegar PRs de 1 repositório e gerar dataset
-    api = ApiRequester()
-    owner, repo = "microsoft", "vscode"  # exemplo
-    prs = api.get_pull_requests(owner, repo)
-    metrics = extract_metrics(prs)
-    save_metrics_to_csv(metrics, "vscode_prs_metrics.csv")
-    print(f"Coletadas {len(metrics)} métricas de PRs do {repo}.")
+    result = GraphService.analyze_pr_size_feedback("dataset_top200_repos_prs.csv")
+    print(result)
+    #asyncio.run(main())

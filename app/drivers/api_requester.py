@@ -1,7 +1,7 @@
 import csv
+import time
 from datetime import datetime
 import requests
-import json
 
 TOKEN = ""
 
@@ -9,10 +9,7 @@ class ApiRequester:
 
     @staticmethod
     async def get_top1000_git_repositories(keyword: str, num_repos: int = 1000):
-        headers = {
-            "Authorization": f"token {TOKEN}"
-        }
-
+        headers = {"Authorization": f"token {TOKEN}"}
         base_url = "https://api.github.com/search/repositories"
         all_repos = []
         per_page = 100
@@ -29,18 +26,15 @@ class ApiRequester:
                 }
                 response = requests.get(base_url, headers=headers, params=params)
                 response.raise_for_status()
-
                 data = response.json()
-                items = data.get("items", [])
-                all_repos.extend(items)
+                all_repos.extend(data.get("items", []))
+                time.sleep(1)  # evita rate limit
 
-            filename = f"repos_{keyword}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
+            filename = f"repos_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
             with open(filename, mode="w", newline="", encoding="utf-8") as file:
                 writer = csv.writer(file)
-                writer.writerow([
-                    "name", "full_name", "stars", "language",
-                    "created_at", "updated_at", "open_issues", "html_url"
-                ])
+                writer.writerow(["name", "full_name", "stars", "language",
+                                 "created_at", "updated_at", "open_issues", "html_url"])
                 for repo in all_repos:
                     writer.writerow([
                         repo.get("name"),
@@ -52,104 +46,90 @@ class ApiRequester:
                         repo.get("open_issues_count"),
                         repo.get("html_url")
                     ])
-
             return all_repos
 
         except requests.RequestException as e:
             print("Erro:", e)
             return None
 
+    # ⚙️ GraphQL - retorna PRs ricos (para suas RQs)
     @staticmethod
-    def get_top100_git_repositories():
-        headers = {"Authorization": f"token "}
+    def get_pr_data(owner: str, repo: str, num_prs: int = 100):
         url = "https://api.github.com/graphql"
-        params = {
-            "q": "stars:>1 sort:stars-desc",
-            "first": 100
-        }
-
+        headers = {"Authorization": f"Bearer {TOKEN}"}
         query = """
-        query TopRepos($q: String!, $first: Int!) {
-          search(query: $q, type: REPOSITORY, first: $first) {
-            repositoryCount
-            pageInfo { hasNextPage endCursor }
-            edges {
-              node {
-                ... on Repository {
-                  nameWithOwner
-                  url
-                  stargazerCount
-                  createdAt
-                  updatedAt
-                  pushedAt
-                  primaryLanguage { name }
-                  releases { totalCount }
-                  pullRequests(states: MERGED) { totalCount }
-                  openIssues: issues(states: OPEN) { totalCount }
-                  closedIssues: issues(states: CLOSED) { totalCount }
-                }
+        query($owner: String!, $repo: String!, $numPRs: Int!) {
+          repository(owner: $owner, name: $repo) {
+            pullRequests(first: $numPRs, states: [MERGED, CLOSED], orderBy: {field: CREATED_AT, direction: DESC}) {
+              nodes {
+                number
+                title
+                state
+                merged
+                createdAt
+                closedAt
+                mergedAt
+                additions
+                deletions
+                changedFiles
+                bodyText
+                comments { totalCount }
+                reviews { totalCount }
+                commits { totalCount }
+                author { login }
               }
             }
           }
         }
         """
-        response = requests.post(url, json={"query": query, "variables": params}, headers=headers)
 
-        if response.status_code == 200:
-            data = response.json()
-            print("Top 100 repositórios coletados com sucesso!")
-            with open("repos_100.json", "w", encoding="utf-8") as f:
-                json.dump(data, f, indent=2)
-            return data
+        variables = {"owner": owner, "repo": repo, "numPRs": num_prs}
+        r = requests.post(url, json={"query": query, "variables": variables}, headers=headers)
+
+        if r.status_code == 200:
+            data = r.json()
+            try:
+                return data["data"]["repository"]["pullRequests"]["nodes"]
+            except (TypeError, KeyError):
+                print(f"Nenhum PR retornado de {owner}/{repo}")
+                return []
         else:
-            print("Erro:", response.status_code, response.text)
-            return None
-
-    @staticmethod
-    def get_repo_details(owner: str, name: str):
-        """Consulta detalhes de 1 repositório usando GraphQL"""
-        headers = {"Authorization": f"token {TOKEN}"}
-        url = "https://api.github.com/graphql"
-
-        query = """
-            query RepoDetails($owner: String!, $name: String!) {
-              repository(owner: $owner, name: $name) {
-                nameWithOwner
-                url
-                stargazerCount
-                createdAt
-                updatedAt
-                primaryLanguage { name }
-                releases { totalCount }
-                pullRequests(states: MERGED) { totalCount }
-                openIssues: issues(states: OPEN) { totalCount }
-                closedIssues: issues(states: CLOSED) { totalCount }
-              }
-            }
-            """
-
-        variables = {"owner": owner, "name": name}
-
-        response = requests.post(url, json={"query": query, "variables": variables}, headers=headers)
-
-        if response.status_code == 200:
-            data = response.json()
-            repo = data.get("data", {}).get("repository", {})
-            return repo
-        else:
-            print("Erro:", response.status_code, response.text)
-            return None
-
-    @staticmethod
-    def get_pull_requests(owner: str, repo: str, per_page: int = 50):
-        headers = {"Authorization": f"token {TOKEN}"}
-        base_url = f"https://api.github.com/repos/{owner}/{repo}/pulls"
-        params = {
-            "state": "all",
-            "per_page": per_page
-        }
-        response = requests.get(base_url, headers=headers, params=params)
-        if response.status_code != 200:
-            print(f"Erro ao buscar PRs de {repo}: {response.text}")
+            print(f"Erro: {r.status_code} - {r.text}")
             return []
-        return response.json()
+
+    @staticmethod
+    def extract_pr_metrics(prs):
+        metrics = []
+        for pr in prs:
+            created = datetime.fromisoformat(pr["createdAt"].replace("Z", "+00:00"))
+            closed = datetime.fromisoformat(pr["closedAt"].replace("Z", "+00:00")) if pr["closedAt"] else None
+            analysis_time_h = (closed - created).total_seconds() / 3600 if closed else None
+
+            body_len = len(pr.get("bodyText") or "")
+
+            metrics.append({
+                "number": pr["number"],
+                "state": pr["state"],
+                "merged": pr["merged"],
+                "additions": pr["additions"],
+                "deletions": pr["deletions"],
+                "changed_files": pr["changedFiles"],
+                "description_length": body_len,
+                "analysis_time_h": analysis_time_h,
+                "comments": pr["comments"]["totalCount"],
+                "reviews": pr["reviews"]["totalCount"],
+                "commits": pr["commits"]["totalCount"],
+            })
+        return metrics
+
+    @staticmethod
+    def save_to_csv(metrics, filename="prs_dataset.csv"):
+        if not metrics:
+            print("⚠️ Nenhum dado para salvar.")
+            return
+        keys = metrics[0].keys()
+        with open(filename, "w", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=keys)
+            writer.writeheader()
+            writer.writerows(metrics)
+        print(f"✅ {len(metrics)} PRs salvos em {filename}")
