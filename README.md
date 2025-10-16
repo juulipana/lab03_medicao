@@ -19,7 +19,7 @@ O objetivo deste laboratório é analisar a atividade de code review em reposit�
 
 ---
 
-# Índice
+# Sumário
 
 * [Objetivo](#objetivo)
 * [Metodologia](#metodologia)
@@ -30,10 +30,6 @@ O objetivo deste laboratório é analisar a atividade de code review em reposit�
 * [Hipóteses](#hipóteses)
 * [Desafios](#desafios)
 * [Análise dos Resultados](#análise-dos-resultados)
-  * [RQ01 – Tamanho dos PRs x Feedback](#rq01---tamanho-dos-prs-x-feedback)
-  * [RQ02 – Tempo de análise x Feedback](#rq02---tempo-de-análise-x-feedback)
-  * [RQ03 – Descrição do PR x Feedback](#rq03---descrição-do-pr-x-feedback)
-  * [RQ04 – Interações nos PRs x Feedback](#rq04---interações-nos-prs-x-feedback)
 * [Conclusão](#conclusão)
 * [Trabalhos Relacionados](#trabalhos-relacionados)
 * [Referências](#referências)
