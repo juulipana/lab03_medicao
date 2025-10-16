@@ -88,8 +88,7 @@ Analisar a atividade de code review desenvolvida em repositórios populares do G
 
 ## RQ07 – Descrição do PR x Número de revisões
 
-- Hipótese 7: PRs com descrições claras e detalhadas tendem a necessitar de menos revisões.  
-- Hipótese 7b: PRs com descrições pobres exigem mais revisões para clarificação e correção.  
+- Hipótese 7: PRs com descrições maiores tendem a necessitar de menos revisões.  
 
 ## RQ08 – Interações nos PRs x Número de revisões
 
