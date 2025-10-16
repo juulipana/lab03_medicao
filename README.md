@@ -64,23 +64,19 @@ Analisar a atividade de code review desenvolvida em repositórios populares do G
 
 ## RQ01 – Tamanho dos PRs x Feedback
 
-- Hipótese 1a: PRs maiores têm menor probabilidade de serem fechadas com sucesso devido à maior complexidade.  
-- Hipótese 1b: PRs menores tendem a ser aprovadas mais rapidamente e com menos revisões.  
+- Hipótese 1: PRs maiores tendem a receber mais feedback devido a complexidade de modificações.
 
 ## RQ02 – Tempo de análise x Feedback
 
-- Hipótese 2a: PRs que permanecem mais tempo em análise têm menor probabilidade de fechamento bem-sucedido.  
-- Hipótese 2b: Maior tempo de análise está associado a PRs mais complexas ou com necessidade de mais ajustes.  
+- Hipótese 2: PRs que permanecem mais tempo em análise têm maior probabilidade de terem mais feedbacks.
 
 ## RQ03 – Descrição do PR x Feedback
 
-- Hipótese 3a: PRs com descrições claras e detalhadas têm maior chance de serem aprovadas.  
-- Hipótese 3b: PRs com descrições incompletas ou confusas têm maior probabilidade de gerar revisões adicionais e atrasos no fechamento.  
+- Hipótese 3: PRs com maiores descrições tendem a ter maior feedback.  
 
 ## RQ04 – Interações nos PRs x Feedback
 
-- Hipótese 4a: PRs com muitas interações (comentários, discussões) tendem a ter fechamento mais demorado.  
-- Hipótese 4b: Maior número de interações pode indicar divergências ou revisões complexas, reduzindo as chances de fechamento rápido.  
+- Hipótese 4a: PRs com muitas interações (comentários, discussões) tendem a ter maior feedback.  
 
 ## RQ05 – Tamanho dos PRs x Número de revisões
 
