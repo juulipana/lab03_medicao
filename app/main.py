@@ -62,6 +62,24 @@ async def main():
 
 
 if __name__ == "__main__":
-    result = GraphService.analyze_pr_size_feedback("dataset_top200_repos_prs.csv")
-    print(result)
-    #asyncio.run(main())
+    csv_path = "dataset_top200_repos_prs.csv"
+
+    GraphService.analyze_pr_size_feedback(
+        csv_path, save_path="rq1_pr_size_feedback.png"
+    )
+    GraphService.analyze_analysis_time_feedback(
+        csv_path, save_path="rq2_analysis_time_feedback.png"
+    )
+    GraphService.analyze_description_feedback(
+        csv_path, save_path="rq3_description_feedback.png"
+    )
+    GraphService.analyze_interactions_feedback(
+        csv_path, save_path="rq4_interactions_feedback.png"
+    )
+
+    GraphService.analyze_pr_size_reviews(csv_path, "rq5_pr_size_reviews.png")
+    GraphService.analyze_analysis_time_reviews(csv_path, "rq6_analysis_time_reviews.png")
+    GraphService.analyze_description_reviews(csv_path, "rq7_description_reviews.png")
+    GraphService.analyze_interactions_reviews(csv_path, "rq8_interactions_reviews.png")
+
+    print("\n✅ Todos os gráficos RQ1–RQ4 foram gerados e salvos com sucesso!")
