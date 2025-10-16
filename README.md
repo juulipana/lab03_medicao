@@ -109,7 +109,11 @@ Analisar a atividade de code review desenvolvida em repositórios populares do G
 
 # Desafios
 
-// TO-DO
+* Quantidade de requisições;
+* Volume das requisições;
+* Tivemos que aumentar os casos de filtro;
+* Lentidão;
+* Última RQ.
 
 # Análise dos Resultados - Grupo A - Feedback Final das Revisões
 
@@ -176,7 +180,7 @@ Alguns fatores que podem explicar esse comportamento incluem:
 
 <img width="2060" height="1407" alt="image" src="https://github.com/user-attachments/assets/b9e05057-feb2-4749-b6c6-dcbfbc71fa47" />
 
-## RQ06 – Qual a relação entre o tempo de análise dos PRs e o número de revisões realizadas? (// REVIEW)
+## RQ06 – Qual a relação entre o tempo de análise dos PRs e o número de revisões realizadas?
 
 O boxplot abaixo mostra a relação entre o tempo de análise das PRs e o número de revisões:
 
@@ -186,7 +190,7 @@ O boxplot abaixo mostra a relação entre o tempo de análise das PRs e o númer
   
 <img width="2060" height="1411" alt="image" src="https://github.com/user-attachments/assets/6cfe47e5-238f-42ae-83ba-326644a11ba9" />
 
-## RQ07 – Qual a relação entre a descrição dos PRs e o número de revisões realizadas? (// REVIEW)
+## RQ07 – Qual a relação entre a descrição dos PRs e o número de revisões realizadas?
 
 O tamanho da descrição da PR quase não influencia o número de revisões, ou seja, apreseta uma orrelação fraca (r = 0,12).
 
