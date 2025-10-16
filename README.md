@@ -228,9 +228,36 @@ Um aprendizado importante é que processos de revisão são mais dinâmicos e de
 
 # Trabalhos Relacionados
 
-// TO-DO
+## Beyond the Code: Investigating the Effects of Pull Request Conversations on Design Decay
+
+**Contexto**
+O desenvolvimento colaborativo de software, em plataformas como GitHub e GitLab, ocorre com base em pull requests, onde desenvolvedores discutem mudanças e compartilham conhecimento. Essas conversas são influenciadas por fatores sociais — como a forma de comunicação, o conteúdo das discussões e a organização da equipe. Embora já se saiba que aspectos sociais afetam a qualidade do software, ainda não está claro como e quanto eles influenciam a degradação de design (ou design decay), isto é, o enfraquecimento da estrutura e manutenibilidade do código ao longo do tempo.
+
+**Objetivo:**
+Investigar como aspectos sociais das conversas em pull requests afetam a degradação de design.
+
+**Método:**
+O estudo analisou 10.746 conversas de pull requests em 11 sistemas de código aberto, considerando três dimensões sociais:
+
+* Conteúdo das discussões – o que é falado nas mensagens.
+* Dinâmicas de comunicação – duração, frequência e engajamento.
+* Dinâmicas organizacionais – tamanho da equipe e diversidade de gênero.
+
+Foram aplicadas 18 métricas sociais e modelos estatísticos (como regressão logística) para avaliar a relação de cada métrica com o design decay.
+
+**Resultados:**
+Os autores descobriram que:
+
+* Fatores como tamanho e duração das discussões, presença de termos relacionados a design, tamanho da equipe e diversidade de gênero ajudam a distinguir pull requests que impactam o design daquelas que não impactam.
+* Crescimento organizacional e diversidade de gênero estão associados à redução da degradação de design.
+* Cada comunidade tem suas próprias características que influenciam a manutenção da qualidade de design.
+* Feedback rápido, comunicação ativa e discussões focadas em design com participação variada melhoram a estrutura do software.
+
+**Conclusão:**
+Os aspectos sociais das conversas em pull requests são indicadores úteis da degradação de design. Melhorar a comunicação e promover equipes diversas pode ajudar a evitar ou reduzir problemas estruturais no código.
 
 # Referências
 
-// TO-DO
+C. Barbosa, A. Uchôa, D. Coutinho, W. K. G. Assunção, A. Oliveira, A. Garcia, B. Fonseca, M. Rabelo, J. E. Coelho, E. Carvalho, e H. Santos, “Beyond the Code: Investigating the Effects of Pull Request Conversations on Design Decay,” 2023 IEEE/ACM 17th International Symposium on Empirical Software Engineering and Measurement (ESEM), New Orleans, LA, USA, 2023. Disponível em: https://ieeexplore.ieee.org/document/10304805
+. Acesso em: [data de acesso].
 
